@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Code
+GenericName=Code Editor
+Comment=Source code editor
+Categories=TextEditor;
+Exec=com.github.rsaprun.code
+Icon=application-default-icon
+Terminal=false
+Type=Application
+X-GNOME-Gettext-Domain=code
+Keywords=IDE;Text;Editor;
+

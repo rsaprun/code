@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+    <id>com.github.rsaprun.code</id>
+    <metadata_license>CC0</metadata_license>
+    <name>Code</name>
+    <summary>Code editor</summary>
+    <description>
+        <p>Source code editor</p>
+    </description>
+</component>
+

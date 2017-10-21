@@ -20,16 +20,13 @@
 */
 
 class Application : Gtk.Application {
-    public Application () {
-        Object (
-            application_id: "com.github.rsaprun.code",
-            flags: ApplicationFlags.FLAGS_NONE);
+    construct {
+        application_id = "com.github.rsaprun.code";
+        flags = ApplicationFlags.FLAGS_NONE;
     }
 
     protected override void activate () {
-        var app_window = new Gtk.ApplicationWindow (this);
-        app_window.title = "Code";
-        app_window.show_all ();
+        var app_window = new MainWindow (this);
         app_window.show ();
     }
 

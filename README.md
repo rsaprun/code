@@ -1,7 +1,7 @@
 # TODO
 
 - [x] app window
-- [ ] text editor
+- [x] text editor
 - [ ] files panel
 - [ ] tabs
 - [ ] file command-line parameter

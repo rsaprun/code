@@ -2,7 +2,7 @@
 
 - [x] app window
 - [x] text editor
-- [ ] files panel
+- [x] files panel
 - [ ] tabs
 - [ ] file command-line parameter
 - [ ] directory command-line parameter
@@ -21,4 +21,7 @@
 - [ ] build panel
 - [ ] build
 - [ ] fast open panel
+- [ ] icon
+- [ ] settings
+- [ ] about window
 

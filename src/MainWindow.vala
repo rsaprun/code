@@ -20,6 +20,8 @@
 */
 
 class MainWindow : Gtk.ApplicationWindow {
+    private Granite.Widgets.DynamicNotebook notebook;
+
     public MainWindow (Gtk.Application app) {
         Object (
             application: app,
@@ -49,12 +51,34 @@ class MainWindow : Gtk.ApplicationWindow {
         var cell = new Gtk.CellRendererText ();
         tree.insert_column_with_attributes (-1, "Name", cell, "text", 0);
         
+        notebook = new Granite.Widgets.DynamicNotebook ();
+        notebook.add_button_visible = false;
+        notebook.set_size_request (600, -1);
+        paned.pack2 (notebook, true, true);
+        
+        selection.changed.connect (() => {
+        });
+        
+        notebook.tab_removed.connect (() => {
+        });
+        
+        destroy.connect (() => {
+            foreach (var tab in notebook.tabs) {
+                tab.close ();
+            }
+        });
+        
+        show_all ();
+
+        add_tab ("File1.txt");
+        add_tab ("File2.txt");
+    }
+    
+    private void add_tab (string label) {
         var buffer = new Gtk.SourceBuffer (null);
         buffer.style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("oblivion");
-        
+
         var sourceView = new Gtk.SourceView.with_buffer (buffer);
-        sourceView.set_size_request (600, -1);
-        paned.pack2 (sourceView, true, true);
         sourceView.auto_indent = true;
         sourceView.highlight_current_line = true;
         sourceView.insert_spaces_instead_of_tabs = true;
@@ -64,10 +88,8 @@ class MainWindow : Gtk.ApplicationWindow {
         sourceView.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
         sourceView.tab_width = 4;
 
-        selection.changed.connect (() => {
-        });
-        
-        show_all ();
+        var tab = new Granite.Widgets.Tab (label, null, sourceView);
+        notebook.insert_tab (tab, -1);
     }
 }
 

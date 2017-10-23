@@ -3,7 +3,7 @@
 - [x] app window
 - [x] text editor
 - [x] files panel
-- [ ] tabs
+- [x] tabs
 - [ ] file command-line parameter
 - [ ] directory command-line parameter
 - [ ] create directory

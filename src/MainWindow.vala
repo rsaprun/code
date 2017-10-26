@@ -26,7 +26,32 @@ class MainWindow : Gtk.ApplicationWindow {
         Object (
             application: app,
             title: "Code");
-        
+    }
+    
+    public void open_empty () {
+        var scroll = new Gtk.ScrolledWindow (null, null);
+        var source_view = add_source_view ("");
+        scroll.set_size_request (800, 600);
+        scroll.add (source_view);
+        add (scroll);
+        show_all ();
+    }
+    
+    public void open_file (File file) {
+        string contents;
+        if (FileUtils.get_contents (file.get_path (), out contents)) {
+            var scroll = new Gtk.ScrolledWindow (null, null);
+            var source_view = add_source_view (contents);
+            scroll.set_size_request (800, 600);
+            scroll.add (source_view);
+            add (scroll);
+            show_all ();
+        } else {
+            //
+        }
+    }
+    
+    public void open_directory (File file) {
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
         paned.set_size_request (800, 600);
         add (paned);
@@ -75,21 +100,27 @@ class MainWindow : Gtk.ApplicationWindow {
     }
     
     private void add_tab (string label) {
+        var source_view = add_source_view ("");
+        var tab = new Granite.Widgets.Tab (label, null, source_view);
+        notebook.insert_tab (tab, -1);
+    }
+    
+    private Gtk.SourceView add_source_view (string contents) {
         var buffer = new Gtk.SourceBuffer (null);
+        buffer.set_text (contents);
         buffer.style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("oblivion");
 
-        var sourceView = new Gtk.SourceView.with_buffer (buffer);
-        sourceView.auto_indent = true;
-        sourceView.highlight_current_line = true;
-        sourceView.insert_spaces_instead_of_tabs = true;
-        sourceView.monospace = true;
-        sourceView.show_line_numbers = true;
-        sourceView.smart_backspace = true;
-        sourceView.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
-        sourceView.tab_width = 4;
-
-        var tab = new Granite.Widgets.Tab (label, null, sourceView);
-        notebook.insert_tab (tab, -1);
+        var source_view = new Gtk.SourceView.with_buffer (buffer);
+        source_view.auto_indent = true;
+        source_view.highlight_current_line = true;
+        source_view.insert_spaces_instead_of_tabs = true;
+        source_view.monospace = true;
+        source_view.show_line_numbers = true;
+        source_view.smart_backspace = true;
+        source_view.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
+        source_view.tab_width = 4;
+        
+        return source_view;
     }
 }
 

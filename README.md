@@ -4,7 +4,7 @@
 - [x] text editor
 - [x] files panel
 - [x] tabs
-- [ ] file command-line parameter
+- [x] file command-line parameter
 - [ ] directory command-line parameter
 - [ ] create directory
 - [ ] remove directory

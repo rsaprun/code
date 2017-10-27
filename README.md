@@ -5,15 +5,19 @@
 - [x] files panel
 - [x] tabs
 - [x] file command-line parameter
+- [x] open file on click
+- [x] close tab
+- [ ] do not open duplicates
+- [ ] fix empty screen
+- [ ] close window when single tab closed
 - [ ] directory command-line parameter
+- [ ] sort tree
 - [ ] create directory
 - [ ] remove directory
 - [ ] rename directory
 - [ ] create file
 - [ ] remove file
 - [ ] rename file
-- [ ] open file on click
-- [ ] close tab
 - [ ] save file
 - [ ] mark changed file tab
 - [ ] local search
@@ -24,4 +28,5 @@
 - [ ] icon
 - [ ] settings
 - [ ] about window
+- [ ] refresh tree
 

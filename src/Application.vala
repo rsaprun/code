@@ -53,7 +53,9 @@ class Application : Gtk.Application {
                     app_window.show ();
                     break;
                 case FileType.DIRECTORY:
-                    stdout.printf("d %s\n", file.get_uri ());
+                    app_window = new MainWindow (this);
+                    app_window.open_directory (file);
+                    app_window.show ();
                     break;
             }
         }

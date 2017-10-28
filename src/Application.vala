@@ -27,7 +27,7 @@ class Application : Gtk.Application {
 
     protected override void activate () {
         var app_window = new MainWindow (this);
-        app_window.open_empty ();
+        app_window.open_file (null);
         app_window.show ();
     }
 

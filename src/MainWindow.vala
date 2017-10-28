@@ -28,7 +28,7 @@ class MainWindow : Gtk.ApplicationWindow {
         Object (
             application: app,
             title: "Code");
-
+        
         paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
         paned.set_size_request (800, 600);
         add (paned);
@@ -48,18 +48,9 @@ class MainWindow : Gtk.ApplicationWindow {
         });
     }
     
-    public void open_empty () {
+    public void open_file (File? file) {
         show_all ();
-        var scroll = new Gtk.ScrolledWindow (null, null);
-        var source_view = add_source_view ("");
-        scroll.add (source_view);
-        var tab = new Granite.Widgets.Tab ("New File", null, scroll);
-        notebook.insert_tab (tab, -1);
-    }
-    
-    public void open_file (File file) {
         add_tab (file);
-        show_all ();
     }
     
     public void open_directory (File directory) {
@@ -101,10 +92,10 @@ class MainWindow : Gtk.ApplicationWindow {
     }
     
     private void fill_tree_store (File directory, Gtk.TreeStore store, Gtk.TreeIter? parent_iter) {
-        FileEnumerator enumerator = directory.enumerate_children ("standard::*",
-            FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
-        FileInfo info;
         try {
+            FileEnumerator enumerator = directory.enumerate_children ("standard::*",
+                FileQueryInfoFlags.NOFOLLOW_SYMLINKS);
+            FileInfo info;
             while ((info = enumerator.next_file ()) != null) {
                 Gtk.TreeIter iter;
                 store.append (out iter, parent_iter);
@@ -118,39 +109,21 @@ class MainWindow : Gtk.ApplicationWindow {
             warning ("Cannot list %s: %s", directory.get_basename(), ex.message);
         }
     }
-    
-    private void add_tab (File file) {
-        string contents;
-        try {
-            if (FileUtils.get_contents (file.get_path (), out contents)) {
-                var scroll = new Gtk.ScrolledWindow (null, null);
-                var source_view = add_source_view (contents);
-                scroll.add (source_view);
-                var tab = new Granite.Widgets.Tab (file.get_basename (), null, scroll);
-                notebook.insert_tab (tab, -1);
-                notebook.current = tab;
-            }
-        } catch (FileError ex) {
-            warning ("Cannot read %s: %s", file.get_basename(), ex.message);
-        }
-    }
-    
-    private Gtk.SourceView add_source_view (string contents) {
-        var buffer = new Gtk.SourceBuffer (null);
-        buffer.set_text (contents);
-        buffer.style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("oblivion");
 
-        var source_view = new Gtk.SourceView.with_buffer (buffer);
-        source_view.auto_indent = true;
-        source_view.highlight_current_line = true;
-        source_view.insert_spaces_instead_of_tabs = true;
-        source_view.monospace = true;
-        source_view.show_line_numbers = true;
-        source_view.smart_backspace = true;
-        source_view.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
-        source_view.tab_width = 4;
-        
-        return source_view;
+    private void add_tab (File? file) {
+        if (file != null) {
+            for (int i = 0; i < notebook.tabs.length (); i++) {
+                DocumentTab old_tab = notebook.tabs.nth_data(i) as DocumentTab;
+                if (old_tab.file.get_uri () == file.get_uri ()) {
+                    notebook.current = old_tab;
+                    return;
+                }
+            }
+        }
+    
+        var new_tab = new DocumentTab (file);
+        notebook.insert_tab (new_tab, -1);
+        notebook.current = new_tab;
     }
 }
 

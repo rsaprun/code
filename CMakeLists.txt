@@ -21,6 +21,7 @@ ensure_vala_version("0.22" MINIMUM)
 include(ValaPrecompile)
 vala_precompile(VALA_C ${EXEC_NAME}
     src/Application.vala
+    src/DocumentTab.vala
     src/MainWindow.vala
 PACKAGES
     gtksourceview-3.0

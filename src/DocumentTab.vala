@@ -22,6 +22,8 @@
 class DocumentTab : Granite.Widgets.Tab {
     private string _file_name;
     private File? _file;
+    private Gtk.SourceView _source_view;
+    private static Gtk.SourceLanguageManager _language_manager;
     
     public File? file {
         get {
@@ -30,6 +32,10 @@ class DocumentTab : Granite.Widgets.Tab {
         set {
             _file = value;
         }
+    }
+
+    static construct {
+        _language_manager = Gtk.SourceLanguageManager.get_default ();
     }
 
     public DocumentTab (File? file) {
@@ -43,13 +49,13 @@ class DocumentTab : Granite.Widgets.Tab {
             _file_name = file.get_basename ();
             contents = read_file (file);
         }
-        var source_view = add_source_view (contents);
-        scroll.add (source_view);
+        create_source_view (contents);
+        scroll.add (_source_view);
         this.label = _file_name;
         this.page = scroll;
         
-        source_view.buffer.changed.connect (() => {
-            if (source_view.buffer.get_modified ()) {
+        _source_view.buffer.changed.connect (() => {
+            if (_source_view.buffer.get_modified ()) {
                 this.label = "\u2219 " + _file_name;
             } else {
                 this.label = _file_name;
@@ -57,22 +63,34 @@ class DocumentTab : Granite.Widgets.Tab {
         });
     }
 
-    private Gtk.SourceView add_source_view (string contents) {
+    private void create_source_view (string contents) {
         var buffer = new Gtk.SourceBuffer (null);
+        buffer.undo_manager.begin_not_undoable_action ();
         buffer.set_text (contents);
+        buffer.undo_manager.end_not_undoable_action ();
+        Gtk.TextIter text_iter;
+        buffer.get_start_iter (out text_iter);
+        buffer.place_cursor (text_iter);
         buffer.style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("oblivion");
+        if (_file != null) {
+            try {
+                var info = _file.query_info ("standard::*", FileQueryInfoFlags.NONE, null);
+                var mime_type = ContentType.get_mime_type (info.get_attribute_as_string (FileAttribute.STANDARD_CONTENT_TYPE));
+                buffer.language = _language_manager.guess_language (_file.get_path (), mime_type);
+            } catch (Error ex) {
+                warning ("Cannot read %s: %s", _file.get_basename (), ex.message);
+            }
+        }
 
-        var source_view = new Gtk.SourceView.with_buffer (buffer);
-        source_view.auto_indent = true;
-        source_view.highlight_current_line = true;
-        source_view.insert_spaces_instead_of_tabs = true;
-        source_view.monospace = true;
-        source_view.show_line_numbers = true;
-        source_view.smart_backspace = true;
-        source_view.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
-        source_view.tab_width = 4;
-        
-        return source_view;
+        _source_view = new Gtk.SourceView.with_buffer (buffer);
+        _source_view.auto_indent = true;
+        _source_view.highlight_current_line = true;
+        _source_view.insert_spaces_instead_of_tabs = true;
+        _source_view.monospace = true;
+        _source_view.show_line_numbers = true;
+        _source_view.smart_backspace = true;
+        _source_view.smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
+        _source_view.tab_width = 4;
     }
     
     private string read_file (File file) {
@@ -82,9 +100,21 @@ class DocumentTab : Granite.Widgets.Tab {
                 return contents;
             }
         } catch (FileError ex) {
-            warning ("Cannot read %s: %s", file.get_basename(), ex.message);
+            warning ("Cannot read %s: %s", file.get_basename (), ex.message);
         }
         return "";
+    }
+
+    public void save () {
+        if (_file != null) {
+            try {
+                FileUtils.set_contents (_file.get_path (), _source_view.buffer.text);
+                _source_view.buffer.set_modified (false);
+                this.label = _file_name;
+            } catch (FileError ex) {
+                warning ("Cannot write %s: %s", _file.get_basename (), ex.message);
+            }
+        }
     }
 }
 

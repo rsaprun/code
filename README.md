@@ -10,6 +10,8 @@
 - [x] directory command-line parameter
 - [x] mark changed file tab
 - [x] do not open duplicates
+- [x] save file
+- [x] syntax highlighting
 - [ ] fix empty screen
 - [ ] close window when single tab closed
 - [ ] sort tree
@@ -19,7 +21,6 @@
 - [ ] create file
 - [ ] remove file
 - [ ] rename file
-- [ ] save file
 - [ ] local search
 - [ ] global search
 - [ ] build panel
@@ -29,7 +30,6 @@
 - [ ] settings
 - [ ] about window
 - [ ] refresh tree
-- [ ] syntax highlighting
 - [ ] autocomplete
 - [ ] warn when closing changed tab
 - [ ] warn when closing window with changed tab

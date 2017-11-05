@@ -24,11 +24,18 @@ class MainWindow : Gtk.ApplicationWindow {
     private Granite.Widgets.DynamicNotebook notebook;
     private File root_directory;
 
+    private const ActionEntry[] actions = {
+        { "save", on_save },
+    };
+
     public MainWindow (Gtk.Application app) {
         Object (
             application: app,
             title: "Code");
         
+        add_action_entries (actions, this);
+        app.set_accels_for_action ("win.save", new string[] { "<Control>s" });
+
         paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
         paned.set_size_request (800, 600);
         add (paned);
@@ -47,7 +54,13 @@ class MainWindow : Gtk.ApplicationWindow {
             }
         });
     }
-    
+
+    private void on_save (SimpleAction action, Variant? parameter) {
+        foreach (var tab in notebook.tabs) {
+            ((DocumentTab)tab).save ();
+        }
+    }
+
     public void open_file (File? file) {
         show_all ();
         add_tab (file);
